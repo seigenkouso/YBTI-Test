@@ -1,6 +1,8 @@
 # YBTI-Test (Yorushika-Briggs Type Indicator)
 
-![YBTI Banner](./images/deer.gif)
+<p align="center">
+  <img src="./images/deer.gif" alt="YBTI Banner" width="10%">
+</p>
 
 > 「君の人生になりたい僕の、人生を書きたい」
 >
