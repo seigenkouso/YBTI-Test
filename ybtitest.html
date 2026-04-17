@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YBTI Test</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍋</text></svg>">
+    <style>
+        :root {
+            --bg-color: #f5f7fa; 
+            --card-bg: #ffffff;
+            --text-main: #2c3e50; 
+            --text-secondary: #7f8c8d;
+            --accent-blue: #18B9ED; 
+            --accent-hover: #eff6ff;
+            --agree-color: #F5A01D;
+            --disagree-color: #A0C04D;
+            --neutral-color: #F4AFBC;
+            --border-color: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Google Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        #app {
+            width: 100%; max-width: 100vw; min-height: 100vh;
+            background: var(--bg-color);
+            display: flex; flex-direction: column; position: relative;
+        }
+
+        @media (min-width: 768px) {
+            #app {
+                max-width: 800px; min-height: auto; margin: 4vh auto;
+            }
+        }
+
+        .progress-container { width: 100%; height: 6px; background: #e2e8f0; position: fixed; top: 0; left: 0; z-index: 10; }
+        .progress-bar { height: 100%; width: 0%; background: var(--accent-blue); transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+
+        .screen { display: none; flex-direction: column; align-items: center; padding: 40px 20px; animation: fadeIn 0.4s ease forwards; width: 100%; box-sizing: border-box; }
+        .screen.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+        .card-container { background: var(--card-bg); width: 100%; max-width: 600px; border-radius: 16px; padding: 40px 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.04); box-sizing: border-box; }
+
+        h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; text-align: center; }
+        p.subtitle { color: var(--text-secondary); font-size: 15px; margin-bottom: 40px; text-align: center; }
+
+        .question-nav { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .nav-btn { background: transparent; border: none; color: var(--text-secondary); font-size: 14px; font-weight: 600; cursor: pointer; padding: 8px 12px; border-radius: 8px; transition: background 0.2s; }
+        .nav-btn:hover { background: var(--accent-hover); color: var(--accent-blue); }
+        .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+        .q-counter { font-size: 15px; font-weight: 600; color: var(--accent-blue); }
+
+        #question-text { font-size: 22px; font-weight: 600; text-align: center; line-height: 1.5; margin-bottom: 50px; min-height: 80px; display: flex; align-items: center; justify-content: center; }
+
+        .likert-wrapper { width: 100%; display: flex; flex-direction: column; gap: 20px; margin-bottom: 20px; }
+        .likert-labels { display: flex; justify-content: space-between; font-size: 15px; font-weight: 600; }
+        .label-agree { color: var(--agree-color); }
+        .label-disagree { color: var(--disagree-color); }
+        
+        .likert-group { display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 0 10px; box-sizing: border-box; }
+        .likert-btn { border-radius: 50%; border: 3px solid; background: transparent; cursor: pointer; transition: all 0.2s ease; outline: none; padding: 0; }
+        
+        .likert-btn.size-3 { width: 50px; height: 50px; }
+        .likert-btn.size-2 { width: 40px; height: 40px; }
+        .likert-btn.size-1 { width: 30px; height: 30px; }
+        .likert-btn.size-0 { width: 24px; height: 24px; border-color: var(--neutral-color); border-width: 2px; }
+        
+        .likert-btn.agree { border-color: var(--agree-color); }
+        .likert-btn.agree:hover, .likert-btn.agree.selected { background-color: var(--agree-color); border-color: var(--agree-color); transform: scale(1.05); }
+        
+        .likert-btn.disagree { border-color: var(--disagree-color); }
+        .likert-btn.disagree:hover, .likert-btn.disagree.selected { background-color: var(--disagree-color); border-color: var(--disagree-color); transform: scale(1.05); }
+        
+        .likert-btn.neutral:hover, .likert-btn.neutral.selected { background-color: var(--neutral-color); }
+
+        @media (max-width: 480px) {
+            .likert-btn.size-3 { width: 40px; height: 40px; }
+            .likert-btn.size-2 { width: 32px; height: 32px; }
+            .likert-btn.size-1 { width: 26px; height: 26px; }
+            .likert-labels { font-size: 13px; }
+        }
+
+        #sheet-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(245,247,250,0.98); display: none; flex-direction: column; align-items: center; padding: 40px 20px; box-sizing: border-box; z-index: 100; animation: fadeIn 0.2s ease; overflow-y: auto; }
+        #sheet-modal.active { display: flex; }
+        .sheet-header { width: 100%; max-width: 500px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        
+        .sheet-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; width: 100%; max-width: 400px; margin: 0 auto; }
+        .sheet-item { aspect-ratio: 1; border-radius: 8px; border: 1px solid var(--border-color); background: #fff; display: flex; justify-content: center; align-items: center; font-weight: 600; font-size: 15px; color: var(--text-secondary); cursor: pointer; transition: all 0.2s; }
+        .sheet-item.answered { background: var(--accent-hover); color: var(--accent-blue); border-color: var(--accent-blue); }
+        .sheet-item.current { background: var(--accent-blue); color: #fff; border-color: var(--accent-blue); }
+
+        @media (min-width: 768px) {
+            .sheet-grid { grid-template-columns: repeat(6, 1fr); gap: 16px; max-width: 450px; }
+            .sheet-item { height: 56px; aspect-ratio: auto; font-size: 16px; }
+        }
+
+        .result-wrapper { width: 100%; max-width: 800px; display: flex; flex-direction: column; gap: 20px; }
+        .res-top-card { background: var(--card-bg); border-radius: 16px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.04); display: flex; flex-direction: column; gap: 30px; }
+        .res-bottom-card { background: var(--card-bg); border-radius: 16px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.04); }
+        
+        @media (min-width: 768px) {
+            .res-top-card { flex-direction: row; align-items: flex-start; }
+            .res-left { flex: 1; border-right: 1px solid var(--border-color); padding-right: 30px; display: flex; flex-direction: column; align-items: center; text-align: center; }
+            .res-right { flex: 1.2; padding-left: 30px; }
+        }
+        @media (max-width: 767px) {
+            .res-left { display: flex; flex-direction: column; align-items: center; text-align: center; border-bottom: 1px solid var(--border-color); padding-bottom: 30px; }
+        }
+
+        .res-left p { color: var(--text-secondary); font-size: 14px; margin: 0 0 10px 0; }
+        .result-name-cn { font-size: 26px; font-weight: 700; color: var(--text-main); margin-bottom: 4px; }
+        .result-code-en { font-size: 22px; font-weight: 800; color: var(--accent-right); letter-spacing: 1px; margin-bottom: 20px; }
+        .image-placeholder { width: 160px; height: 160px; background: #f8f9fa; border: 2px dashed #cbd5e1; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; color: #aaa; font-size: 13px; }
+        .res-short-desc { font-size: 13px; color: var(--text-secondary); }
+
+        .res-right-title { font-size: 13px; color: var(--text-secondary); margin-bottom: 6px; }
+        .res-right-main { font-size: 24px; font-weight: 700; margin-bottom: 20px; }
+        
+        .traits-container { width: 100%; display: flex; flex-direction: column; gap: 16px; }
+        .trait-row { width: 100%; }
+        .trait-labels { display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; }
+        .trait-bar-bg { width: 100%; height: 6px; background: #f1f5f9; border-radius: 3px; position: relative; overflow: hidden; }
+        .trait-bar-fill { height: 100%; position: absolute; top: 0; border-radius: 3px; transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); }
+
+        .res-bottom-card h3 { font-size: 18px; font-weight: 700; margin: 0 0 16px 0; color: var(--text-main); border-left: 4px solid var(--accent-blue); padding-left: 10px; line-height: 1; }
+        .res-long-desc { font-size: 15px; line-height: 1.8; color: #475569; text-align: justify; }
+
+        .btn-primary { background: var(--accent-blue); color: white; border: none; padding: 16px 48px; border-radius: 30px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(59, 130, 246, 0.3); }
+        .btn-primary:disabled { background: #cbd5e1; cursor: not-allowed; transform: none; box-shadow: none; }
+        .top-nav {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            z-index: 90;
+        }
+        .wiki-btn {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+        .wiki-btn:hover {
+            color: var(--accent-blue);
+            border-color: var(--accent-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+        }
+        #wiki-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(245,247,250,0.95); backdrop-filter: blur(5px);
+            display: none; flex-direction: column; align-items: center;
+            padding: 60px 20px 40px; box-sizing: border-box; z-index: 200;
+            animation: fadeIn 0.2s ease; overflow-y: auto;
+        }
+        #wiki-modal.active { display: flex; }
+        
+        .wiki-container {
+            width: 100%; max-width: 600px;
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 40px 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+            position: relative;
+        }
+        .wiki-close {
+            position: absolute; top: 20px; right: 20px;
+            background: transparent; border: none; font-size: 24px;
+            color: var(--text-secondary); cursor: pointer;
+            transition: color 0.2s;
+        }
+        .wiki-close:hover { color: var(--text-main); }
+        
+        .wiki-section { margin-bottom: 30px; }
+        .wiki-section:last-child { margin-bottom: 0; }
+        .wiki-section h4 {
+            font-size: 16px; font-weight: 700; color: var(--text-main);
+            margin: 0 0 12px 0; border-left: 4px solid var(--accent-blue); padding-left: 10px;
+        }
+        .wiki-section p { font-size: 14px; line-height: 1.8; color: var(--text-secondary); margin: 0 0 8px 0; text-align: justify; }
+        .wiki-links-wrap { display: flex; gap: 12px; margin-top: 16px; flex-wrap: wrap; }
+        .wiki-link {
+            display: inline-flex; align-items: center; padding: 12px 24px;
+            border-radius: 12px; text-decoration: none; font-weight: 600; font-size: 14px;
+            transition: all 0.2s;
+        }
+        /* --- Wiki 内的 Logo 与图标样式 --- */
+        .wiki-logo-img {
+            height: 16px; 
+            vertical-align: middle;
+            margin: 0 6px; 
+        }
+        .wiki-btn-icon {
+            height: 18px;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        .link-github { background: #24292e; color: #fff; }
+        .link-github:hover { background: #000; transform: translateY(-2px); }
+        .link-bili { background: #fb7299; color: #fff; }
+        .link-bili:hover { background: #ff5c8a; transform: translateY(-2px); }
+        .disclaimer { font-size: 12px; color: #94a3b8; margin-top: 30px; line-height: 1.6; text-align: center; }
+
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <div class="progress-container" id="progress-container" style="display: none;">
+        <div id="progress-bar" class="progress-bar"></div>
+    </div>
+
+    <div id="screen-start" class="screen active">
+        <div class="card-container" style="display: flex; flex-direction: column; align-items: center;">
+            <h1 style="margin-top: 20px;">YBTI 测试</h1>
+            <h3 style="margin-top: 10px;">（Yorushika-Briggs Type Indicator）</h3>
+            <p class="subtitle">属于✌🦌➗的“MBTI”</p>
+            <div class="image-placeholder" style="border: none; background: transparent; margin-bottom: 40px; width: 200px; height: 200px; position: relative;">
+                <img src="images/deer.gif" alt="首页动画" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none;">   
+                <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10;" alt="保护层">
+            </div>
+            <button class="btn-primary" onclick="startTest()">🔥 开始测试</button>
+        </div>
+    </div>
+
+    <div id="screen-question" class="screen">
+        <div class="card-container">
+            <div class="question-nav">
+                <button class="nav-btn" id="btn-back" onclick="goBack()">← 上一题</button>
+                <div class="q-counter" id="q-counter">1 / 40</div>
+                <button class="nav-btn" onclick="toggleSheet()">我的作答 ☰</button>
+            </div>
+            <div id="question-text">题目加载中...</div>
+            <div class="likert-wrapper">
+                <div class="likert-labels">
+                    <span class="label-disagree">非常不同意</span>
+                    <span class="label-agree">非常同意</span>
+                </div>
+                <div class="likert-group" id="likert-group">
+                    </div>
+            </div>
+            <button id="btn-submit-last" class="btn-primary" style="display:none; margin-top: 30px; width: 100%;" onclick="checkAndSubmit()">提交作答</button>
+        </div>
+    </div>
+
+    <div id="sheet-modal">
+        <div class="sheet-header">
+            <h3 style="margin:0; font-size: 18px;">我的作答</h3>
+            <button class="nav-btn" onclick="toggleSheet()" style="font-size: 20px;">✕</button>
+        </div>
+        <div class="sheet-grid" id="sheet-grid"></div>
+        <button class="btn-primary" style="margin-top: 40px; width: 100%; max-width: 300px;" onclick="submitFromSheet()">检查并提交</button>
+    </div>
+
+    <div id="screen-result" class="screen" style="padding: 20px;">
+        <div class="result-wrapper">
+            
+            <div class="res-top-card">
+                <div class="res-left">
+                    <p>你的人格类型是：</p>
+                    <div class="result-name-cn" id="res-name-cn">加载中</div>
+                    <div class="result-code-en" id="res-code-en">...</div>
+                    <div class="image-placeholder" style="border: none; background: transparent; position: relative;">
+                        <img id="res-image" src="" alt="立绘" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none;">
+                        <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10;" alt="保护层">
+                    </div>
+                    <div class="res-short-desc" id="res-short-desc">...</div>
+                    
+                    <div style="margin-top: 24px; width: 100%;">
+                        <p style="font-size: 12px; margin-bottom: 8px; color: var(--text-secondary);">🎵 你的主题曲</p>
+                        <audio id="bgm-player" controls style="width: 100%; height: 36px; outline: none;"></audio>
+                    </div>
+                </div>
+                <div class="res-right">
+                    <div class="res-right-title">你的主类型</div>
+                    <div class="res-right-main"><span id="res-code-2">GOGO</span> (<span id="res-name-2">行者</span>)</div>
+                    <div class="traits-container">
+                        <div class="trait-row"><div class="trait-labels"><span>云 (C)</span><span id="pct-cs"></span><span>海 (S)</span></div><div class="trait-bar-bg"><div class="trait-bar-fill" id="bar-cs" style="width: 0;"></div></div></div>
+                        <div class="trait-row"><div class="trait-labels"><span>夏 (U)</span><span id="pct-un"></span><span>夜 (N)</span></div><div class="trait-bar-bg"><div class="trait-bar-fill" id="bar-un" style="width: 0;"></div></div></div>
+                        <div class="trait-row"><div class="trait-labels"><span>辞 (W)</span><span id="pct-wm"></span><span>音 (M)</span></div><div class="trait-bar-bg"><div class="trait-bar-fill" id="bar-wm" style="width: 0;"></div></div></div>
+                        <div class="trait-row"><div class="trait-labels"><span>步 (A)</span><span id="pct-ai"></span><span>待 (I)</span></div><div class="trait-bar-bg"><div class="trait-bar-fill" id="bar-ai" style="width: 0;"></div></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="res-bottom-card">
+                <h3>该人格的简单解读</h3>
+                <div class="res-long-desc" id="res-long-desc">
+                    正在生成人格报告...
+                </div>
+            </div>
+
+            <p class="disclaimer">※ 本测试是基于 Yorushika 音乐作品的二次创作<br>结果仅供娱乐，切勿过度代入现实。</p>
+        </div>
+    </div>
+</div>
+
+<div class="top-nav">
+        <button class="wiki-btn" onclick="toggleWikiModal()">项目 Wiki</button>
+    </div>
+
+    <div id="wiki-modal">
+        <div class="wiki-container">
+            <button class="wiki-close" onclick="toggleWikiModal()">✕</button>
+            <h2 style="margin-top: 0; margin-bottom: 30px; font-size: 24px; color: var(--text-main);">YBTI 测试（Yorushika-Briggs Type Indicator）</h2>
+            
+            <div class="wiki-section">
+                <h4>维度解析</h4>
+                <p><strong>「表达」云(C) vs 海(S)</strong>：“云”代表向外散发、表达自我；“海”代表向内沉淀、独自承受。</p>
+                <p><strong>「感知」夏(U) vs 夜(N)</strong>：“夏”代表执着于具象的现实细节；“夜”代表游离于抽象的哲学与虚无。</p>
+                <p><strong>「应对」辞(W) vs 音(M)</strong>：“辞”代表试图用文字和逻辑去解构痛苦；“音”代表依靠纯粹的旋律与直觉共鸣。</p>
+                <p><strong>「步调」步(A) vs 待(I)</strong>：“步”代表具有明确目的地的寻找与前行；“待”代表停留在原地的等待与随遇而安。</p>
+            </div>
+
+            <div class="wiki-section">
+                <h4>AI 工具使用说明</h4>
+                <p>项目网页前端架构、交互逻辑与算法借助<img src="images/GEMINI.png" alt="Google Gemini" class="wiki-logo-img">辅助编码完成。</p>
+                <p>16 种人格对应的立绘由<img src="images/GEMINI.png" alt="Google Gemini" class="wiki-logo-img">与<img src="images/CHATGPT.png" alt="ChatGPT" class="wiki-logo-img">生成。</p>
+            </div>
+
+            <div class="wiki-section">
+                <h4>开源与开发者</h4>
+                <p>您可前往 GitHub 查看项目源码，也欢迎访问开发者 Bilibili 频道（内容以 VOCALOID 翻调为主）。</p>
+                <div class="wiki-links-wrap">
+                    <a href="https://github.com/seigenkouso/YBTI-Test" target="_blank" class="wiki-link link-github">
+                        <img src="images/GITHUB.png" alt="GitHub" class="wiki-btn-icon"> GitHub
+                    </a>
+                    
+                    <a href="https://space.bilibili.com/285295336" target="_blank" class="wiki-link link-bili">
+                        <img src="images/BILIBILI.png" alt="Bilibili" class="wiki-btn-icon"> Bilibili
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+    const questions = [
+        { text: "如果在空无一人的教室发现一把吉他，我会忍不住试着去拨弄几下。", agree: "C", disagree: "S" },
+        { text: "关于内心的秘密，我更倾向于将它们彻底沉入心底烂掉，而不是对任何人或树洞诉说。", agree: "S", disagree: "C" },
+        { text: "面对一场盛大的夏日祭典，我更喜欢融入喧闹的人群中去近距离感受烟花升空的震撼。", agree: "C", disagree: "S" },
+        { text: "我的社交能量就像老旧的蓄电池，耗尽后需要极其漫长的独处时间来重新充电。", agree: "S", disagree: "C" },
+        { text: "当我完成了一件满意的作品，我的第一反应总是迫不及待地想展示给懂的人看。", agree: "C", disagree: "S" },
+        { text: "听到一首极其触动心弦的歌时，我通常会默默收藏并独自单曲循环，而不是立刻分享到朋友圈。", agree: "S", disagree: "C" },
+        { text: "面对一片广阔无垠的天空，我常常会有一种想要大声呼喊些什么的冲动。", agree: "C", disagree: "S" },
+        { text: "当心中积压了无法排解的情绪时，我更倾向于像云一样化作暴雨倾泻而出，而不是像深海一样默默将重压独自承受。", agree: "C", disagree: "S" },
+        { text: "在多人的社交聚会中，我通常是主动抛出话题、主导氛围的那个人，而不是坐在角落静静观察的旁观者。", agree: "C", disagree: "S" },
+        { text: "相比起充满人声喧哗的白天，我更享受万籁俱寂、只听得到自己呼吸声的深夜。", agree: "S", disagree: "C" },
+
+        { text: "回想那个特别的午后，我最先记起的往往是某种难以名状的心境，而不是柏油路或贩卖机等具体细节。", agree: "N", disagree: "U" },
+        { text: "看到路边盛开的花，我会第一时间联想到它的颜色、花期以及客观的生长环境。", agree: "U", disagree: "N" },
+        { text: "对我而言，“蓝色”代表的首先是一种名为“遗憾”与“忧郁”的情绪，其次才是天空或海洋的客观颜色。", agree: "N", disagree: "U" },
+        { text: "比起充满生活痕迹、细节丰富的小镇街道，我更偏爱空旷无垠、只剩下风声的暗夜风景。", agree: "N", disagree: "U" },
+        { text: "梦醒之后，我通常会努力去回忆梦里发生的具体场景、人物长相和说过的对话。", agree: "U", disagree: "N" },
+        { text: "在写信或记录时，我习惯一上来就直接抛出某种萦绕在心头的模糊感受，而不是先描述当下的天气或环境。", agree: "N", disagree: "U" },
+        { text: "相比起彻底沉浸在没有星星的黑夜里，坐在充满阳光的车站长椅上更能让我感到安心。", agree: "U", disagree: "N" },
+        { text: "观察一幅画或听一首歌时，我往往先注意到具体的色彩、乐器和技巧，而不是它背后试图传达的抽象隐喻。", agree: "U", disagree: "N" },
+        { text: "我经常会不由自主地陷入对“存在意义”、“虚无”等哲学命题的沉思，甚至因此忽略了眼前的现实生活。", agree: "N", disagree: "U" },
+        { text: "如果要写一篇游记，我一定会详细记录行程表、吃过的食物和看过的风景，而不是通篇描写自己意识流的内心活动。", agree: "U", disagree: "N" },
+
+        { text: "当生活陷入低谷，我更倾向于通过写日记或备忘录来理清逻辑寻找答案，而不是纯靠听音乐冲刷情绪。", agree: "W", disagree: "M" },
+        { text: "我认为艺术存在的最大意义，是为了传递一种纯粹的、无法用言语捕捉的直觉震动。", agree: "M", disagree: "W" },
+        { text: "收到一封手写信时，相比起字里行间清晰的叙事逻辑，我更容易被笔迹的轻重缓急所带来的直觉感受打动。", agree: "M", disagree: "W" },
+        { text: "如果让我写一封给十年后的自己的信，里面一定包含明确的建议、目标核对或现实的路线图。", agree: "W", disagree: "M" },
+        { text: "吸引我反复循环一首新歌的原因，通常是编曲营造的氛围感和旋律直击心脏，而不是像诗一样精妙的作词。", agree: "M", disagree: "W" },
+        { text: "如果要留下我存在过的证明，我会选择写一本厚厚的、记录生平的日记，而不是留下一段没有歌词的曲子。", agree: "W", disagree: "M" },
+        { text: "面对无法挽回的离别，我的大脑往往会一片空白只剩下悲伤，而不会下意识去用文字反复分析离别的原因。", agree: "M", disagree: "W" },
+        { text: "在做出重大的人生抉择时，我更相信客观的利弊分析与逻辑推演，而不是纯粹依靠内心的直觉或一时的冲动。", agree: "W", disagree: "M" },
+        { text: "当朋友陷入悲伤时，我更倾向于帮他们分析事情的起因并提供解决策略，而不是单纯地给予情感上的拥抱与共鸣。", agree: "W", disagree: "M" },
+        { text: "看电影或读小说时，我极易代入角色的悲欢离合而潸然泪下，而不是跳出来冷静分析剧情的合理性。", agree: "M", disagree: "W" },
+
+        { text: "面对一个未知的十字路口，即使没有地图，我也会选定一个方向果断走下去，而不是留在原地观察。", agree: "A", disagree: "I" },
+        { text: "出门旅行前，我的行李箱里通常装的是严谨的路线表和按需准备的必需品，极少有“走到哪算哪”的随性物品。", agree: "A", disagree: "I" },
+        { text: "对于“时间”的感受，我觉得它更像是必须准时追逐、催促自己向前的刻度，而不是一条任人随波逐流的河。", agree: "A", disagree: "I" },
+        { text: "错过了一班很重要的列车时，我会顺理成章地在长椅上多坐一会儿并接受现状，而不是立刻焦虑地寻找备用方案。", agree: "I", disagree: "A" },
+        { text: "我认为人生的旅途应该是为了抵达那个名为“夏天”的目的地而不断跋涉前行。", agree: "A", disagree: "I" },
+        { text: "当我失去了一个重要的东西，我倾向于待在原地，相信它会以另一种方式回来或就此释怀，而不是立刻踏上寻找它的旅途。", agree: "I", disagree: "A" },
+        { text: "在开始一项长期任务前，我必须先制定好详细的步骤和时间表，否则就会感到极度不安。", agree: "A", disagree: "I" },
+        { text: "当原本计划好的行程突然被一场暴雨打断时，我往往能迅速接受甚至享受这种突如其来的随性，而不是感到烦躁或焦虑。", agree: "I", disagree: "A" },
+        { text: "我的人生必须始终有一个清晰的、如同寻找某人某物般明确的目的地，漫无目的的游荡会让我感到心慌。", agree: "A", disagree: "I" },
+        { text: "相比起立刻得到一个确切的结局或答案，我更愿意让事情保持悬而未决的状态，享受过程中的无限可能。", agree: "I", disagree: "A" }
+    ];
+
+    let userAnswers = new Array(questions.length).fill(null);
+    let currentQuestionIndex = 0;
+
+    const resultMap = {
+        "CUWA": { code: "AMY", name: "艾米", color: "#3b82f6", short: "留下音乐与信件的决绝者", image: "images/AMY.png", 
+            long: "经研究发现，AMY人格是绝对的行动派与现实主义者。在现实生活中，你们拥有极强的执行力和逻辑感，擅长将抽象的想法转化为具体的文字或作品。然而，你们内心往往隐藏着极强的割裂感。你们表面上循规蹈矩、有条不紊，但内心深处却可能觉得“人生全部都像个笑话”。你们习惯用实际行动去掩盖情感的缺失，将人生观浓缩成决绝的字句。对你们来说，真正的活着，是完成该做的事，留下存在的证明，然后头也不回地走向下一个目标。" },
+            
+        "CUWI": { code: "WIND", name: "又三郎", color: "#6366f1", short: "破坏一切的疾风", image: "images/WIND.png", 
+            long: "经研究发现，WIND人格的灵魂里住着一阵不受拘束的风。在现实中，你们反应敏捷、崇尚自由，对周围的世界有着敏锐的观察力，却极其厌恶被死板的规则定义。你们看似人畜无害，甚至有些随波逐流，但内心有着极强的自我逻辑与反叛精神。一旦感到被按部就班的社会压抑，你们就会化作破坏一切的青岚。对你们来说，计划和规矩是最大的毒药，你们需要的是能在失控边缘感受生命实感的广阔旷野。" },
+            
+        "CUMA": { code: "THIEF", name: "春泥棒", color: "#ec4899", short: "抓住时间尾巴的窃贼", image: "images/THIEF.png", 
+            long: "经研究发现，THIEF人格是感性与行动力并存的享乐主义者。你们在生活中充满热情，极度关注当下具体的美好。但正因为你们对“美好”太过敏感，反而对“失去”有着近乎病态的预知。你们深知花期将近，风一吹即是“春泥棒”。因此，你们不愿做长远却无趣的规划，宁愿为了一个完美的夏日午后倾其所有。你们看似冲动，实则是用最热烈的方式，向无情流逝的时间疯狂抢夺稍纵即逝的快乐。" },
+            
+        "CUMI": { code: "GHOST", name: "花上亡灵", color: "#a855f7", short: "执着于夏天的幻影", image: "images/GHOST.png", 
+            long: "经研究发现，GHOST人格拥有极强的情感共鸣与念旧特质。你们感情丰沛，渴望与外界交流，但却常常被记忆中某些具体的碎片（一阵风、一种气味）绊住脚步。在现实中，朋友们可能觉得你们平易近人，但只有你们自己知道，心里的某个角落早已停滞。你们像幽灵一样徘徊在过去的夏日树荫下，抗拒改变，害怕遗忘。对你们来说，守住那些看似虚幻却无比珍贵的回忆，比盲目走向下一个季节更重要。" },
+            
+        "CNWA": { code: "CRIME", name: "思想犯", color: "#ef4444", short: "现实的背叛者", image: "images/CRIME.png", 
+            long: "经研究发现，CRIME人格是理性的颠覆者。你们拥有极高的抽象思维和宏观视野，擅长用冰冷的逻辑去解构世界的伪善，并且具备将想法付诸实践的魄力。在生活中，你们表面波澜不惊，大脑却像是一个危险的违禁品仓库，时刻上演着对现实的批判。你们常常感到孤独，觉得“对他人温柔的你，怎么会懂我的冷酷”。你们不需要世俗的理解，因为在你们看来，在这个荒诞的世界里保持清醒与独立思考，本身就是一种高贵的犯罪。" },
+            
+        "CNWI": { code: "FAKE", name: "盗作家", color: "#8b5cf6", short: "虚无的创造者", image: "images/FAKE.png", 
+            long: "经研究发现，FAKE人格是充满创造力的虚无主义者。你们思维极其跳跃，热衷于探索各种抽象的概念与可能性，但在行动上却常常浅尝辄止。你们极具才华，却患有严重的“自我存在虚无症”。你们总觉得自己的想法、情感甚至悲伤都是从别处借来的伪物，“还不够，全都不够”。为了填补内心的空洞，你们甚至不惜去“偷窃”他人的美丽。对你们而言，解构一切、在废墟中寻找哪怕一丝真实的碎片，才是对抗无聊日常的唯一方式。" },
+            
+        "CNMA": { code: "HOWL", name: "夜吠者", color: "#f59e0b", short: "拒绝黎明的野兽", image: "images/HOWL.png", 
+            long: "经研究发现，HOWL人格是理想主义的情感宣泄者。你们对世界有着强烈的直觉与期待，渴望通过情感表达来影响他人。在白天，你们往往伪装成情绪稳定、长袖善舞的成年人；但一到黑夜，理想与现实的落差带来的巨大孤独，就会让你们想抛下一切狂吠。你们常常觉得自己像一头被困住的野兽，想要敲碎这个充满恶意的世界。你们不需要冰冷的理性安慰，只需要一个能接纳你们所有破碎情绪的深渊。" },
+            
+        "CNMI": { code: "MARTIAN", name: "火星人", color: "#14b8a6", short: "宇宙的异类", image: "images/MARTIAN.png", 
+            long: "经研究发现，MARTIAN人格仿佛是降落地球的外星观测者。你们脑洞大开、情感丰富，对宇宙、生命等抽象命题充满好奇，却很难适应世俗的条条框框。你们看似合群，但内心总是与周遭的喧闹保持着一种抽离的距离感，在自己的精神孤岛上建立了一套独特的运行法则。别人在努力寻找现实的认同，你们却在向浩瀚的星空发送无人回应的电波。对你们来说，孤独从来不是惩罚，而是远离地球重力的太空舱。" },
+
+        "SUWA": { code: "ELMA", name: "艾尔玛", color: "#0ea5e9", short: "追寻足迹的盲从者", image: "images/ELMA.png", 
+            long: "经研究发现，ELMA人格是隐忍克制的孤独朝圣者。你们在现实中极度自律、严谨，习惯将深沉的情感和思念转化为具体的行动与文字记录。当失去重要的人或事物时，别人可能会大哭一场然后向前看，你们却会带上日记本，一丝不苟地重走那段充满回忆的物理路线。你们不会轻易表露心声，只是默默在月光下散步。对你们来说，遗忘是对过去的背叛，用双脚默默丈量回忆、完成既定的承诺，是唯一的救赎。" },
+            
+        "SUWI": { code: "CATT", name: "卡特兰", color: "#d946ef", short: "笔尖生花的守信者", image: "images/CATT.png", 
+            long: "经研究发现，CATT人格如同温室里静静绽放的旁观者。你们极度内敛，注重现实与逻辑，极少主动向外寻求情绪价值，习惯在自己的小世界里自给自足。你们看似冷漠，甚至有些傲慢地认为“别人都是不懂的”，但内心却对真诚有着严苛的洁癖。你们宁愿花钱买一颗没有伤痕的新心，也不愿在虚伪的社交中消耗自我。你们在夏天的阴影中沉睡，用最理智也最决绝的方式保护着自己的底线。" },
+            
+        "SUMA": { code: "FIRE", name: "燃烧者", color: "#f97316", short: "沉默的爆裂物", image: "images/FIRE.png", 
+            long: "经研究发现，FIRE人格是一座伪装成死火山的活火山。在日常生活中，你们温和、默默付出，习惯于将所有的不甘、委屈与情感死死压抑在心底，用沉默和埋头苦干来应对一切。你们极度在意周围的具体感知，看着太阳都会觉得胸口在燃烧。然而，一旦忍耐达到临界点，你们就会爆发出毁灭一切的行动力。别人在遇到问题时会选择沟通或妥协，你们一旦决定爆发，就会毫不犹豫地点燃一切，然后在灰烬中重生。" },
+            
+        "SUMI": { code: "PLOVER", name: "千鸟", color: "#0d9488", short: "徘徊水畔的共鸣者", image: "images/PLOVER.png", 
+            long: "经研究发现，PLOVER人格拥有极高的感性雷达与避世倾向。你们对周遭的具体事物（一朵花、一阵雨）有着近乎溺水的共情能力，但极少主动表达，更愿意将感受深藏心底。风在呼唤，鸟在呼唤，而你们总是选择假装糊涂，迈着不确定的千鸟步绕远路。你们不喜欢干涉世界的运转，也不愿强求改变，只想在荒唐的烈日或阴天里假装大醉一场，静静地感知着一切细微的悲喜，任由世界在周围旋转。" },
+            
+        "SNWA": { code: "BOMB", name: "爆弹魔", color: "#be123c", short: "绝对理性的引爆者", image: "images/BOMB.png", 
+            long: "经研究发现，BOMB人格的内心藏着一个精密运转的倒计时器。你们拥有极强的抽象洞察力和冷酷的执行力，但极少与人分享内心的真实想法。在现实中，你们死鱼眼中透着理智，能一眼看穿事物的本质与虚伪。当面对无法修补的过去或荒谬的现实时，你们不会沉溺于悲伤，而是萌生出把它们全都爆破掉的冲动。这种极端的破坏欲，其实源于你们无法向外排解的苦闷和对纯粹、完美世界的绝对渴望。" },
+            
+        "SNWI": { code: "COPY", name: "复制人", color: "#64748b", short: "探寻灵魂的仿生人", image: "images/COPY.png", 
+            long: "经研究发现，COPY人格常常陷入深刻的存在主义危机。你们极度理智、内向，喜欢在脑海中进行庞大而抽象的推演，却很少将其付诸行动。别人在享受世俗的快乐，你们却像在看一部廉价的科幻电影，怀疑除了心之外全都是伪造的，甚至觉得自己也是个仿生人。你们总是用上帝视角审视自己的人生，对现实的感知异常淡薄。对你们来说，在无尽的思索中探寻灵魂的真实，比任何世俗的意义都更重要。" },
+            
+        "SNMA": { code: "WOOD", name: "啄木鸟", color: "#d97706", short: "叩问虚无的寻木者", image: "images/WOOD.png", 
+            long: "经研究发现，WOOD人格有着近乎偏执的内在精神追求。你们拥有深邃的直觉和强烈的情感，并且总是试图通过某种隐秘的方式将这种情感化为实质的信念。你们的内心世界极其丰富，却又时常感到一种难以言喻的空虚。面对刺眼的阳光，你们一言不发，只能像啄木鸟一样，笃笃地敲击着命运的枯树，试图叩问那些虚无缥缈的意义。这种略带悲剧色彩的徒劳行动，是你们对抗残酷现实的独特方式。" },
+            
+        "SNMI": { code: "MAZE", name: "阿尔吉侬", color: "#4f46e5", short: "迷失迷宫的纯粹者", image: "images/MAZE.png", 
+            long: "经研究发现，MAZE人格仿佛被困在名为“感性”的巨大迷宫中。你们对世界有着超乎常人的敏锐和悲悯，却因为这过载的感受力而选择退缩到最安全的内心角落。你们经常在心里发问：“你为什么赋予了我心”。面对外界的纷扰，你们不愿去争抢或反抗，而是像阿尔吉侬一样慢慢改变，静静地看着花开花落。对你们来说，与其聪明而清醒地痛苦，不如在迷失中寻找最纯粹的温柔，任由思绪在黑夜里漫游。" }
+    };
+
+    function startTest() {
+        document.getElementById('screen-start').classList.remove('active');
+        document.getElementById('screen-question').classList.add('active');
+        document.getElementById('progress-container').style.display = 'block';
+        renderQuestion();
+    }
+
+    function renderQuestion() {
+        const q = questions[currentQuestionIndex];
+        document.getElementById('btn-back').disabled = currentQuestionIndex === 0;
+        document.getElementById('q-counter').innerText = `${currentQuestionIndex + 1} / ${questions.length}`;
+        document.getElementById('question-text').innerText = q.text;
+        
+        const answeredCount = userAnswers.filter(a => a !== null).length;
+        const progress = (answeredCount / questions.length) * 100;
+        document.getElementById('progress-bar').style.width = `${progress}%`;
+
+        const group = document.getElementById('likert-group');
+        group.innerHTML = ''; 
+        
+        const sizes = [3, 2, 1, 0, 1, 2, 3];
+        const types = ['disagree', 'disagree', 'disagree', 'neutral', 'agree', 'agree', 'agree'];
+        const values = [-3, -2, -1, 0, 1, 2, 3];
+
+        values.forEach((val, i) => {
+            const btn = document.createElement('button');
+            btn.className = `likert-btn size-${sizes[i]} ${types[i]}`;
+            if (userAnswers[currentQuestionIndex] === val) {
+                btn.classList.add('selected');
+            }
+            btn.onclick = () => selectOption(val);
+            group.appendChild(btn);
+        });
+
+        const submitBtn = document.getElementById('btn-submit-last');
+        if (currentQuestionIndex === questions.length - 1) {
+            submitBtn.style.display = 'block';
+            submitBtn.disabled = userAnswers[currentQuestionIndex] === null;
+        } else {
+            submitBtn.style.display = 'none';
+        }
+    }
+
+    function selectOption(val) {
+        userAnswers[currentQuestionIndex] = val;
+        renderQuestion(); 
+        
+        if (currentQuestionIndex < questions.length - 1) {
+            setTimeout(() => { currentQuestionIndex++; renderQuestion(); }, 250);
+        }
+    }
+
+    function goBack() { if (currentQuestionIndex > 0) { currentQuestionIndex--; renderQuestion(); } }
+
+    function toggleSheet() {
+        const modal = document.getElementById('sheet-modal');
+        if (modal.classList.contains('active')) modal.classList.remove('active');
+        else { renderSheetGrid(); modal.classList.add('active'); }
+    }
+
+    function renderSheetGrid() {
+        const grid = document.getElementById('sheet-grid');
+        grid.innerHTML = '';
+        for (let i = 0; i < questions.length; i++) {
+            const item = document.createElement('div');
+            item.className = 'sheet-item';
+            item.innerText = i + 1;
+            if (i === currentQuestionIndex) item.classList.add('current');
+            else if (userAnswers[i] !== null) item.classList.add('answered');
+            item.onclick = () => { currentQuestionIndex = i; toggleSheet(); renderQuestion(); };
+            grid.appendChild(item);
+        }
+    }
+
+    function submitFromSheet() { toggleSheet(); checkAndSubmit(); }
+
+    function checkAndSubmit() {
+        const firstUnanswered = userAnswers.indexOf(null);
+        if (firstUnanswered !== -1) {
+            alert(`第 ${firstUnanswered + 1} 题还没做哦~`);
+            currentQuestionIndex = firstUnanswered;
+            renderQuestion();
+            return;
+        }
+        calculateResult();
+    }
+
+    function calculateResult() {
+        const progressContainer = document.getElementById('progress-container');
+        if (progressContainer) progressContainer.style.display = 'none';
+
+        let finalScores = { C: 0, S: 0, U: 0, N: 0, W: 0, M: 0, A: 0, I: 0 };
+        
+        userAnswers.forEach((ans, idx) => {
+            const q = questions[idx];
+            if (ans > 0) finalScores[q.agree] += ans;               
+            if (ans < 0) finalScores[q.disagree] += Math.abs(ans);  
+        });
+
+        const dim1 = finalScores.C >= finalScores.S ? "C" : "S";
+        const dim2 = finalScores.U >= finalScores.N ? "U" : "N";
+        const dim3 = finalScores.W >= finalScores.M ? "W" : "M";
+        const dim4 = finalScores.A >= finalScores.I ? "A" : "I";
+        const rawCode = dim1 + dim2 + dim3 + dim4;
+
+        const res = resultMap[rawCode];
+
+        document.getElementById('screen-question').classList.remove('active');
+        document.getElementById('screen-result').classList.add('active');
+
+        try {
+            document.getElementById('res-name-cn').innerText = res.name;
+            document.getElementById('res-code-en').innerText = res.code;
+            document.getElementById('res-code-en').style.color = res.color;
+            document.getElementById('res-short-desc').innerText = res.short;
+            document.getElementById('res-code-2').innerText = res.code;
+            document.getElementById('res-name-2').innerText = res.name;
+            document.getElementById('res-long-desc').innerText = res.long;
+            
+            const descTitle = document.getElementById('desc-title');
+            if (descTitle) descTitle.style.borderLeftColor = res.color;
+        } catch (e) {
+            console.warn("部分文本标签未找到，但不影响整体运行", e);
+        }
+
+        try {
+            const imgEl = document.getElementById('res-image');
+            if (imgEl && res.image) {
+                imgEl.src = res.image;
+            }
+        } catch (e) {
+            console.warn("图片标签未找到，跳过图片渲染", e);
+        }
+
+        const audioPlayer = document.getElementById('bgm-player');
+        if (audioPlayer) {
+            audioPlayer.src = `music/${res.code}.mp3`; 
+        }
+
+        renderTraitBars(finalScores, res.color);
+    }
+
+    function renderTraitBars(scores, mainColor) {
+        const getPct = (val1, val2) => (val1 + val2) === 0 ? 50 : Math.round((val1 / (val1 + val2)) * 100);
+
+        const pctC = getPct(scores.C, scores.S);
+        const pctU = getPct(scores.U, scores.N);
+        const pctW = getPct(scores.W, scores.M);
+        const pctA = getPct(scores.A, scores.I);
+
+        updateBarUI('cs', pctC, 100 - pctC, mainColor);
+        updateBarUI('un', pctU, 100 - pctU, mainColor);
+        updateBarUI('wm', pctW, 100 - pctW, mainColor);
+        updateBarUI('ai', pctA, 100 - pctA, mainColor);
+    }
+
+    function updateBarUI(id, pctLeft, pctRight, mainColor) {
+        const textSpan = document.getElementById(`pct-${id}`);
+        const barEl = document.getElementById(`bar-${id}`);
+
+        if (textSpan) {
+            textSpan.innerText = `${pctLeft}% - ${pctRight}%`;
+        }
+
+        if (barEl) {
+            setTimeout(() => {
+                if (pctLeft >= pctRight) {
+                    barEl.style.width = `${pctLeft}%`; 
+                    barEl.style.left = '0'; 
+                    barEl.style.right = 'auto'; 
+                    barEl.style.background = mainColor;
+                } else {
+                    barEl.style.width = `${pctRight}%`; 
+                    barEl.style.right = '0'; 
+                    barEl.style.left = 'auto'; 
+                    barEl.style.background = mainColor; 
+                }
+            }, 300);
+        }
+    }
+
+    function toggleWikiModal() {
+        const modal = document.getElementById('wiki-modal');
+        if (modal.classList.contains('active')) {
+            modal.classList.remove('active');
+        } else {
+            modal.classList.add('active');
+        }
+    }
+
+</script>
+</body>
+</html>
