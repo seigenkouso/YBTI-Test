@@ -3,6 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:title" content="YBTI 测试">
+    <meta property="og:description" content="你是 Yorushika 世界里的哪种属性？">
+    <meta property="og:image" content="https://https://github.com/seigenkouso/YBTI-Test/images/deer.webp">
+    <meta property="og:url" content="https://https://github.com/seigenkouso/YBTI-Test/">
+    <meta property="og:type" content="website">
     <title>YBTI Test</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍋</text></svg>">
     <style>
@@ -50,6 +55,15 @@
             #app {
                 max-width: 800px; min-height: auto; margin: 4vh auto;
             }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .progress-container { width: 100%; height: 6px; background: #e2e8f0; position: fixed; top: 0; left: 0; z-index: 10; }
@@ -227,7 +241,7 @@
         .link-github:hover { background: #000; transform: translateY(-2px); }
         .link-bili { background: #fb7299; color: #fff; }
         .link-bili:hover { background: #ff5c8a; transform: translateY(-2px); }
-        .disclaimer { font-size: 12px; color: #94a3b8; margin-top: 30px; line-height: 1.6; text-align: center; }
+        .disclaimer { font-size: 12px; color: #94a3b8; margin-top: 30px; line-height: 1.6; text-align: center; }  
 
     </style>
 </head>
@@ -359,38 +373,39 @@
             </div>
         </div>
     </div>
+</div>
 
 <script>
     const questions = [
         { text: "如果在空无一人的教室发现一把吉他，我会忍不住试着去拨弄几下。", agree: "C", disagree: "S" },
-        { text: "关于内心的秘密，我更倾向于将它们彻底沉入心底烂掉，而不是对任何人或树洞诉说。", agree: "S", disagree: "C" },
+        { text: "关于内心的秘密，我更倾向于将它们彻底沉入心底烂掉，而不是对任何人或树洞诉说。", agree: "S", disagree: "C", weight: 2 },
         { text: "面对一场盛大的夏日祭典，我更喜欢融入喧闹的人群中去近距离感受烟花升空的震撼。", agree: "C", disagree: "S" },
         { text: "我的社交能量就像老旧的蓄电池，耗尽后需要极其漫长的独处时间来重新充电。", agree: "S", disagree: "C" },
         { text: "当我完成了一件满意的作品，我的第一反应总是迫不及待地想展示给懂的人看。", agree: "C", disagree: "S" },
         { text: "听到一首极其触动心弦的歌时，我通常会默默收藏并独自单曲循环，而不是立刻分享到朋友圈。", agree: "S", disagree: "C" },
         { text: "面对一片广阔无垠的天空，我常常会有一种想要大声呼喊些什么的冲动。", agree: "C", disagree: "S" },
-        { text: "当心中积压了无法排解的情绪时，我更倾向于像云一样化作暴雨倾泻而出，而不是像深海一样默默将重压独自承受。", agree: "C", disagree: "S" },
+        { text: "当心中积压了无法排解的情绪时，我更倾向于像云一样化作暴雨倾泻而出，而不是像深海一样默默将重压独自承受。", agree: "C", disagree: "S", weight: 2 },
         { text: "在多人的社交聚会中，我通常是主动抛出话题、主导氛围的那个人，而不是坐在角落静静观察的旁观者。", agree: "C", disagree: "S" },
         { text: "相比起充满人声喧哗的白天，我更享受万籁俱寂、只听得到自己呼吸声的深夜。", agree: "S", disagree: "C" },
 
         { text: "回想那个特别的午后，我最先记起的往往是某种难以名状的心境，而不是柏油路或贩卖机等具体细节。", agree: "N", disagree: "U" },
         { text: "看到路边盛开的花，我会第一时间联想到它的颜色、花期以及客观的生长环境。", agree: "U", disagree: "N" },
-        { text: "对我而言，“蓝色”代表的首先是一种名为“遗憾”与“忧郁”的情绪，其次才是天空或海洋的客观颜色。", agree: "N", disagree: "U" },
+        { text: "对我而言，“蓝色”代表的首先是一种名为“遗憾”与“忧郁”的情绪，其次才是天空或海洋的客观颜色。", agree: "N", disagree: "U", weight: 2 },
         { text: "比起充满生活痕迹、细节丰富的小镇街道，我更偏爱空旷无垠、只剩下风声的暗夜风景。", agree: "N", disagree: "U" },
         { text: "梦醒之后，我通常会努力去回忆梦里发生的具体场景、人物长相和说过的对话。", agree: "U", disagree: "N" },
         { text: "在写信或记录时，我习惯一上来就直接抛出某种萦绕在心头的模糊感受，而不是先描述当下的天气或环境。", agree: "N", disagree: "U" },
         { text: "相比起彻底沉浸在没有星星的黑夜里，坐在充满阳光的车站长椅上更能让我感到安心。", agree: "U", disagree: "N" },
         { text: "观察一幅画或听一首歌时，我往往先注意到具体的色彩、乐器和技巧，而不是它背后试图传达的抽象隐喻。", agree: "U", disagree: "N" },
-        { text: "我经常会不由自主地陷入对“存在意义”、“虚无”等哲学命题的沉思，甚至因此忽略了眼前的现实生活。", agree: "N", disagree: "U" },
+        { text: "我经常会不由自主地陷入对“存在意义”、“虚无”等哲学命题的沉思，甚至因此忽略了眼前的现实生活。", agree: "N", disagree: "U", weight: 2 },
         { text: "如果要写一篇游记，我一定会详细记录行程表、吃过的食物和看过的风景，而不是通篇描写自己意识流的内心活动。", agree: "U", disagree: "N" },
 
         { text: "当生活陷入低谷，我更倾向于通过写日记或备忘录来理清逻辑寻找答案，而不是纯靠听音乐冲刷情绪。", agree: "W", disagree: "M" },
-        { text: "我认为艺术存在的最大意义，是为了传递一种纯粹的、无法用言语捕捉的直觉震动。", agree: "M", disagree: "W" },
+        { text: "我认为艺术存在的最大意义，是为了传递一种纯粹的、无法用言语捕捉的直觉震动。", agree: "M", disagree: "W", weight: 2 },
         { text: "收到一封手写信时，相比起字里行间清晰的叙事逻辑，我更容易被笔迹的轻重缓急所带来的直觉感受打动。", agree: "M", disagree: "W" },
         { text: "如果让我写一封给十年后的自己的信，里面一定包含明确的建议、目标核对或现实的路线图。", agree: "W", disagree: "M" },
         { text: "吸引我反复循环一首新歌的原因，通常是编曲营造的氛围感和旋律直击心脏，而不是像诗一样精妙的作词。", agree: "M", disagree: "W" },
         { text: "如果要留下我存在过的证明，我会选择写一本厚厚的、记录生平的日记，而不是留下一段没有歌词的曲子。", agree: "W", disagree: "M" },
-        { text: "面对无法挽回的离别，我的大脑往往会一片空白只剩下悲伤，而不会下意识去用文字反复分析离别的原因。", agree: "M", disagree: "W" },
+        { text: "面对无法挽回的离别，我的大脑往往会一片空白只剩下悲伤，而不会下意识去用文字反复分析离别的原因。", agree: "M", disagree: "W", weight: 2 },
         { text: "在做出重大的人生抉择时，我更相信客观的利弊分析与逻辑推演，而不是纯粹依靠内心的直觉或一时的冲动。", agree: "W", disagree: "M" },
         { text: "当朋友陷入悲伤时，我更倾向于帮他们分析事情的起因并提供解决策略，而不是单纯地给予情感上的拥抱与共鸣。", agree: "W", disagree: "M" },
         { text: "看电影或读小说时，我极易代入角色的悲欢离合而潸然泪下，而不是跳出来冷静分析剧情的合理性。", agree: "M", disagree: "W" },
@@ -399,11 +414,11 @@
         { text: "出门旅行前，我的行李箱里通常装的是严谨的路线表和按需准备的必需品，极少有“走到哪算哪”的随性物品。", agree: "A", disagree: "I" },
         { text: "对于“时间”的感受，我觉得它更像是必须准时追逐、催促自己向前的刻度，而不是一条任人随波逐流的河。", agree: "A", disagree: "I" },
         { text: "错过了一班很重要的列车时，我会顺理成章地在长椅上多坐一会儿并接受现状，而不是立刻焦虑地寻找备用方案。", agree: "I", disagree: "A" },
-        { text: "我认为人生的旅途应该是为了抵达那个名为“夏天”的目的地而不断跋涉前行。", agree: "A", disagree: "I" },
+        { text: "我认为人生的旅途应该是为了抵达那个名为“夏天”的目的地而不断跋涉前行。", agree: "A", disagree: "I", weight: 2 },
         { text: "当我失去了一个重要的东西，我倾向于待在原地，相信它会以另一种方式回来或就此释怀，而不是立刻踏上寻找它的旅途。", agree: "I", disagree: "A" },
         { text: "在开始一项长期任务前，我必须先制定好详细的步骤和时间表，否则就会感到极度不安。", agree: "A", disagree: "I" },
         { text: "当原本计划好的行程突然被一场暴雨打断时，我往往能迅速接受甚至享受这种突如其来的随性，而不是感到烦躁或焦虑。", agree: "I", disagree: "A" },
-        { text: "我的人生必须始终有一个清晰的、如同寻找某人某物般明确的目的地，漫无目的的游荡会让我感到心慌。", agree: "A", disagree: "I" },
+        { text: "我的人生必须始终有一个清晰的、如同寻找某人某物般明确的目的地，漫无目的的游荡会让我感到心慌。", agree: "A", disagree: "I", weight: 2 },
         { text: "相比起立刻得到一个确切的结局或答案，我更愿意让事情保持悬而未决的状态，享受过程中的无限可能。", agree: "I", disagree: "A" }
     ];
 
@@ -411,53 +426,22 @@
     let currentQuestionIndex = 0;
 
     const resultMap = {
-        "CUWA": { code: "AMY", name: "艾米", color: "#3b82f6", short: "留下音乐与信件的决绝者", image: "images/AMY.png", 
-            long: "经研究发现，AMY人格是绝对的行动派与现实主义者。在现实生活中，你们拥有极强的执行力和逻辑感，擅长将抽象的想法转化为具体的文字或作品。然而，你们内心往往隐藏着极强的割裂感。你们表面上循规蹈矩、有条不紊，但内心深处却可能觉得“人生全部都像个笑话”。你们习惯用实际行动去掩盖情感的缺失，将人生观浓缩成决绝的字句。对你们来说，真正的活着，是完成该做的事，留下存在的证明，然后头也不回地走向下一个目标。" },
-            
-        "CUWI": { code: "WIND", name: "又三郎", color: "#6366f1", short: "破坏一切的疾风", image: "images/WIND.png", 
-            long: "经研究发现，WIND人格的灵魂里住着一阵不受拘束的风。在现实中，你们反应敏捷、崇尚自由，对周围的世界有着敏锐的观察力，却极其厌恶被死板的规则定义。你们看似人畜无害，甚至有些随波逐流，但内心有着极强的自我逻辑与反叛精神。一旦感到被按部就班的社会压抑，你们就会化作破坏一切的青岚。对你们来说，计划和规矩是最大的毒药，你们需要的是能在失控边缘感受生命实感的广阔旷野。" },
-            
-        "CUMA": { code: "THIEF", name: "春泥棒", color: "#ec4899", short: "抓住时间尾巴的窃贼", image: "images/THIEF.png", 
-            long: "经研究发现，THIEF人格是感性与行动力并存的享乐主义者。你们在生活中充满热情，极度关注当下具体的美好。但正因为你们对“美好”太过敏感，反而对“失去”有着近乎病态的预知。你们深知花期将近，风一吹即是“春泥棒”。因此，你们不愿做长远却无趣的规划，宁愿为了一个完美的夏日午后倾其所有。你们看似冲动，实则是用最热烈的方式，向无情流逝的时间疯狂抢夺稍纵即逝的快乐。" },
-            
-        "CUMI": { code: "GHOST", name: "花上亡灵", color: "#a855f7", short: "执着于夏天的幻影", image: "images/GHOST.png", 
-            long: "经研究发现，GHOST人格拥有极强的情感共鸣与念旧特质。你们感情丰沛，渴望与外界交流，但却常常被记忆中某些具体的碎片（一阵风、一种气味）绊住脚步。在现实中，朋友们可能觉得你们平易近人，但只有你们自己知道，心里的某个角落早已停滞。你们像幽灵一样徘徊在过去的夏日树荫下，抗拒改变，害怕遗忘。对你们来说，守住那些看似虚幻却无比珍贵的回忆，比盲目走向下一个季节更重要。" },
-            
-        "CNWA": { code: "CRIME", name: "思想犯", color: "#ef4444", short: "现实的背叛者", image: "images/CRIME.png", 
-            long: "经研究发现，CRIME人格是理性的颠覆者。你们拥有极高的抽象思维和宏观视野，擅长用冰冷的逻辑去解构世界的伪善，并且具备将想法付诸实践的魄力。在生活中，你们表面波澜不惊，大脑却像是一个危险的违禁品仓库，时刻上演着对现实的批判。你们常常感到孤独，觉得“对他人温柔的你，怎么会懂我的冷酷”。你们不需要世俗的理解，因为在你们看来，在这个荒诞的世界里保持清醒与独立思考，本身就是一种高贵的犯罪。" },
-            
-        "CNWI": { code: "FAKE", name: "盗作家", color: "#8b5cf6", short: "虚无的创造者", image: "images/FAKE.png", 
-            long: "经研究发现，FAKE人格是充满创造力的虚无主义者。你们思维极其跳跃，热衷于探索各种抽象的概念与可能性，但在行动上却常常浅尝辄止。你们极具才华，却患有严重的“自我存在虚无症”。你们总觉得自己的想法、情感甚至悲伤都是从别处借来的伪物，“还不够，全都不够”。为了填补内心的空洞，你们甚至不惜去“偷窃”他人的美丽。对你们而言，解构一切、在废墟中寻找哪怕一丝真实的碎片，才是对抗无聊日常的唯一方式。" },
-            
-        "CNMA": { code: "HOWL", name: "夜吠者", color: "#f59e0b", short: "拒绝黎明的野兽", image: "images/HOWL.png", 
-            long: "经研究发现，HOWL人格是理想主义的情感宣泄者。你们对世界有着强烈的直觉与期待，渴望通过情感表达来影响他人。在白天，你们往往伪装成情绪稳定、长袖善舞的成年人；但一到黑夜，理想与现实的落差带来的巨大孤独，就会让你们想抛下一切狂吠。你们常常觉得自己像一头被困住的野兽，想要敲碎这个充满恶意的世界。你们不需要冰冷的理性安慰，只需要一个能接纳你们所有破碎情绪的深渊。" },
-            
-        "CNMI": { code: "MARTIAN", name: "火星人", color: "#14b8a6", short: "宇宙的异类", image: "images/MARTIAN.png", 
-            long: "经研究发现，MARTIAN人格仿佛是降落地球的外星观测者。你们脑洞大开、情感丰富，对宇宙、生命等抽象命题充满好奇，却很难适应世俗的条条框框。你们看似合群，但内心总是与周遭的喧闹保持着一种抽离的距离感，在自己的精神孤岛上建立了一套独特的运行法则。别人在努力寻找现实的认同，你们却在向浩瀚的星空发送无人回应的电波。对你们来说，孤独从来不是惩罚，而是远离地球重力的太空舱。" },
-
-        "SUWA": { code: "ELMA", name: "艾尔玛", color: "#0ea5e9", short: "追寻足迹的盲从者", image: "images/ELMA.png", 
-            long: "经研究发现，ELMA人格是隐忍克制的孤独朝圣者。你们在现实中极度自律、严谨，习惯将深沉的情感和思念转化为具体的行动与文字记录。当失去重要的人或事物时，别人可能会大哭一场然后向前看，你们却会带上日记本，一丝不苟地重走那段充满回忆的物理路线。你们不会轻易表露心声，只是默默在月光下散步。对你们来说，遗忘是对过去的背叛，用双脚默默丈量回忆、完成既定的承诺，是唯一的救赎。" },
-            
-        "SUWI": { code: "CATT", name: "卡特兰", color: "#d946ef", short: "笔尖生花的守信者", image: "images/CATT.png", 
-            long: "经研究发现，CATT人格如同温室里静静绽放的旁观者。你们极度内敛，注重现实与逻辑，极少主动向外寻求情绪价值，习惯在自己的小世界里自给自足。你们看似冷漠，甚至有些傲慢地认为“别人都是不懂的”，但内心却对真诚有着严苛的洁癖。你们宁愿花钱买一颗没有伤痕的新心，也不愿在虚伪的社交中消耗自我。你们在夏天的阴影中沉睡，用最理智也最决绝的方式保护着自己的底线。" },
-            
-        "SUMA": { code: "FIRE", name: "燃烧者", color: "#f97316", short: "神秘 451 燃烧人", image: "images/FIRE.png", 
-            long: "经研究发现，FIRE人格是一座伪装成死火山的活火山。在日常生活中，你们温和、默默付出，习惯于将所有的不甘、委屈与情感死死压抑在心底，用沉默和埋头苦干来应对一切。你们极度在意周围的具体感知，看着太阳都会觉得胸口在燃烧。然而，一旦忍耐达到临界点，你们就会爆发出毁灭一切的行动力。别人在遇到问题时会选择沟通或妥协，你们一旦决定爆发，就会毫不犹豫地点燃一切，然后在灰烬中重生。" },
-            
-        "SUMI": { code: "PLOVER", name: "千鸟", color: "#0d9488", short: "徘徊水畔的共鸣者", image: "images/PLOVER.png", 
-            long: "经研究发现，PLOVER人格拥有极高的感性雷达与避世倾向。你们对周遭的具体事物（一朵花、一阵雨）有着近乎溺水的共情能力，但极少主动表达，更愿意将感受深藏心底。风在呼唤，鸟在呼唤，而你们总是选择假装糊涂，迈着不确定的千鸟步绕远路。你们不喜欢干涉世界的运转，也不愿强求改变，只想在荒唐的烈日或阴天里假装大醉一场，静静地感知着一切细微的悲喜，任由世界在周围旋转。" },
-            
-        "SNWA": { code: "BOMB", name: "爆弹魔", color: "#be123c", short: "绝对理性的引爆者", image: "images/BOMB.png", 
-            long: "经研究发现，BOMB人格的内心藏着一个精密运转的倒计时器。你们拥有极强的抽象洞察力和冷酷的执行力，但极少与人分享内心的真实想法。在现实中，你们死鱼眼中透着理智，能一眼看穿事物的本质与虚伪。当面对无法修补的过去或荒谬的现实时，你们不会沉溺于悲伤，而是萌生出把它们全都爆破掉的冲动。这种极端的破坏欲，其实源于你们无法向外排解的苦闷和对纯粹、完美世界的绝对渴望。" },
-            
-        "SNWI": { code: "COPY", name: "复制人", color: "#64748b", short: "探寻灵魂的仿生人", image: "images/COPY.png", 
-            long: "经研究发现，COPY人格常常陷入深刻的存在主义危机。你们极度理智、内向，喜欢在脑海中进行庞大而抽象的推演，却很少将其付诸行动。别人在享受世俗的快乐，你们却像在看一部廉价的科幻电影，怀疑除了心之外全都是伪造的，甚至觉得自己也是个仿生人。你们总是用上帝视角审视自己的人生，对现实的感知异常淡薄。对你们来说，在无尽的思索中探寻灵魂的真实，比任何世俗的意义都更重要。" },
-            
-        "SNMA": { code: "WOOD", name: "啄木鸟", color: "#d97706", short: "叩问虚无的寻木者", image: "images/WOOD.png", 
-            long: "经研究发现，WOOD人格有着近乎偏执的内在精神追求。你们拥有深邃的直觉和强烈的情感，并且总是试图通过某种隐秘的方式将这种情感化为实质的信念。你们的内心世界极其丰富，却又时常感到一种难以言喻的空虚。面对刺眼的阳光，你们一言不发，只能像啄木鸟一样，笃笃地敲击着命运的枯树，试图叩问那些虚无缥缈的意义。这种略带悲剧色彩的徒劳行动，是你们对抗残酷现实的独特方式。" },
-            
-        "SNMI": { code: "MAZE", name: "阿尔吉侬", color: "#4f46e5", short: "迷失迷宫的纯粹者", image: "images/MAZE.png", 
-            long: "经研究发现，MAZE人格仿佛被困在名为“感性”的巨大迷宫中。你们对世界有着超乎常人的敏锐和悲悯，却因为这过载的感受力而选择退缩到最安全的内心角落。你们经常在心里发问：“你为什么赋予了我心”。面对外界的纷扰，你们不愿去争抢或反抗，而是像阿尔吉侬一样慢慢改变，静静地看着花开花落。对你们来说，与其聪明而清醒地痛苦，不如在迷失中寻找最纯粹的温柔，任由思绪在黑夜里漫游。" }
+        "CUWA": { code: "AMY", name: "艾米", color: "#3b82f6", short: "留下音乐与信件的决绝者", image: "images/AMY.png", long: "经研究发现，AMY人格是绝对的行动派与现实主义者。在现实生活中，你们拥有极强的执行力和逻辑感，擅长将抽象的想法转化为具体的文字或作品。然而，你们内心往往隐藏着极强的割裂感。你们表面上循规蹈矩、有条不紊，但内心深处却可能觉得“人生全部都像个笑话”。你们习惯用实际行动去掩盖情感的缺失，将人生观浓缩成决绝的字句。对你们来说，真正的活着，是完成该做的事，留下存在的证明，然后头也不回地走向下一个目标。" },
+        "CUWI": { code: "WIND", name: "又三郎", color: "#6366f1", short: "破坏一切的疾风", image: "images/WIND.png", long: "经研究发现，WIND人格的灵魂里住着一阵不受拘束的风。在现实中，你们反应敏捷、崇尚自由，对周围的世界有着敏锐的观察力，却极其厌恶被死板的规则定义。你们看似人畜无害，甚至有些随波逐流，但内心有着极强的自我逻辑与反叛精神。一旦感到被按部就班的社会压抑，你们就会化作破坏一切的青岚。对你们来说，计划和规矩是最大的毒药，你们需要的是能在失控边缘感受生命实感的广阔旷野。" },
+        "CUMA": { code: "THIEF", name: "春泥棒", color: "#ec4899", short: "抓住时间尾巴的窃贼", image: "images/THIEF.png", long: "经研究发现，THIEF人格是感性与行动力并存的享乐主义者。你们在生活中充满热情，极度关注当下具体的美好。但正因为你们对“美好”太过敏感，反而对“失去”有着近乎病态的预知。你们深知花期将近，风一吹即是“春泥棒”。因此，你们不愿做长远却无趣的规划，宁愿为了一个完美的夏日午后倾其所有。你们看似冲动，实则是用最热烈的方式，向无情流逝的时间疯狂抢夺稍纵即逝的快乐。" },
+        "CUMI": { code: "GHOST", name: "花上亡灵", color: "#a855f7", short: "执着于夏天的幻影", image: "images/GHOST.png", long: "经研究发现，GHOST人格拥有极强的情感共鸣与念旧特质。你们感情丰沛，渴望与外界交流，但却常常被记忆中某些具体的碎片（一阵风、一种气味）绊住脚步。在现实中，朋友们可能觉得你们平易近人，但只有你们自己知道，心里的某个角落早已停滞。你们像幽灵一样徘徊在过去的夏日树荫下，抗拒改变，害怕遗忘。对你们来说，守住那些看似虚幻却无比珍贵的回忆，比盲目走向下一个季节更重要。" },
+        "CNWA": { code: "CRIME", name: "思想犯", color: "#ef4444", short: "现实的背叛者", image: "images/CRIME.png", long: "经研究发现，CRIME人格是理性的颠覆者。你们拥有极高的抽象思维和宏观视野，擅长用冰冷的逻辑去解构世界的伪善，并且具备将想法付诸实践的魄力。在生活中，你们表面波澜不惊，大脑却像是一个危险的违禁品仓库，时刻上演着对现实的批判。你们常常感到孤独，觉得“对他人温柔的你，怎么会懂我的冷酷”。你们不需要世俗的理解，因为在你们看来，在这个荒诞的世界里保持清醒与独立思考，本身就是一种高贵的犯罪。" },
+        "CNWI": { code: "FAKE", name: "盗作家", color: "#8b5cf6", short: "虚无的创造者", image: "images/FAKE.png", long: "经研究发现，FAKE人格是充满创造力的虚无主义者。你们思维极其跳跃，热衷于探索各种抽象的概念与可能性，但在行动上却常常浅尝辄止。你们极具才华，却患有严重的“自我存在虚无症”。你们总觉得自己的想法、情感甚至悲伤都是从别处借来的伪物，“还不够，全都不够”。为了填补内心的空洞，你们甚至不惜去“偷窃”他人的美丽。对你们而言，解构一切、在废墟中寻找哪怕一丝真实的碎片，才是对抗无聊日常的唯一方式。" },
+        "CNMA": { code: "HOWL", name: "夜吠者", color: "#f59e0b", short: "拒绝黎明的野兽", image: "images/HOWL.png", long: "经研究发现，HOWL人格是理想主义的情感宣泄者。你们对世界有着强烈的直觉与期待，渴望通过情感表达来影响他人。在白天，你们往往伪装成情绪稳定、长袖善舞的成年人；但一到黑夜，理想与现实的落差带来的巨大孤独，就会让你们想抛下一切狂吠。你们常常觉得自己像一头被困住的野兽，想要敲碎这个充满恶意的世界。你们不需要冰冷的理性安慰，只需要一个能接纳你们所有破碎情绪的深渊。" },
+        "CNMI": { code: "MARTIAN", name: "火星人", color: "#14b8a6", short: "宇宙的异类", image: "images/MARTIAN.png", long: "经研究发现，MARTIAN人格仿佛是降落地球的外星观测者。你们脑洞大开、情感丰富，对宇宙、生命等抽象命题充满好奇，却很难适应世俗的条条框框。你们看似合群，但内心总是与周遭的喧闹保持着一种抽离的距离感，在自己的精神孤岛上建立了一套独特的运行法则。别人在努力寻找现实的认同，你们却在向浩瀚的星空发送无人回应的电波。对你们来说，孤独从来不是惩罚，而是远离地球重力的太空舱。" },
+        "SUWA": { code: "ELMA", name: "艾尔玛", color: "#0ea5e9", short: "追寻足迹的盲从者", image: "images/ELMA.png", long: "经研究发现，ELMA人格是隐忍克制的孤独朝圣者。你们在现实中极度自律、严谨，习惯将深沉的情感和思念转化为具体的行动与文字记录。当失去重要的人或事物时，别人可能会大哭一场然后向前看，你们却会带上日记本，一丝不苟地重走那段充满回忆的物理路线。你们不会轻易表露心声，只是默默在月光下散步。对你们来说，遗忘是对过去的背叛，用双脚默默丈量回忆、完成既定的承诺，是唯一的救赎。" },
+        "SUWI": { code: "CATT", name: "卡特兰", color: "#d946ef", short: "笔尖生花的守信者", image: "images/CATT.png", long: "经研究发现，CATT人格如同温室里静静绽放的旁观者。你们极度内敛，注重现实与逻辑，极少主动向外寻求情绪价值，习惯在自己的小世界里自给自足。你们看似冷漠，甚至有些傲慢地认为“别人都是不懂的”，但内心却对真诚有着严苛的洁癖。你们宁愿花钱买一颗没有伤痕的新心，也不愿在虚伪的社交中消耗自我。你们在夏天的阴影中沉睡，用最理智也最决绝的方式保护着自己的底线。" },
+        "SUMA": { code: "FIRE", name: "燃烧者", color: "#f97316", short: "神秘 451 燃烧人", image: "images/FIRE.png", long: "经研究发现，FIRE人格是一座伪装成死火山的活火山。在日常生活中，你们温和、默默付出，习惯于将所有的不甘、委屈与情感死死压抑在心底，用沉默和埋头苦干来应对一切。你们极度在意周围的具体感知，看着太阳都会觉得胸口在燃烧。然而，一旦忍耐达到临界点，你们就会爆发出毁灭一切的行动力。别人在遇到问题时会选择沟通或妥协，你们一旦决定爆发，就会毫不犹豫地点燃一切，然后在灰烬中重生。" },
+        "SUMI": { code: "PLOVER", name: "千鸟", color: "#0d9488", short: "徘徊水畔的共鸣者", image: "images/PLOVER.png", long: "经研究发现，PLOVER人格拥有极高的感性雷达与避世倾向。你们对周遭的具体事物（一朵花、一阵雨）有着近乎溺水的共情能力，但极少主动表达，更愿意将感受深藏心底。风在呼唤，鸟在呼唤，而你们总是选择假装糊涂，迈着不确定的千鸟步绕远路。你们不喜欢干涉世界的运转，也不愿强求改变，只想在荒唐的烈日或阴天里假装大醉一场，静静地感知着一切细微的悲喜，任由世界在周围旋转。" },
+        "SNWA": { code: "BOMB", name: "爆弹魔", color: "#be123c", short: "绝对理性的引爆者", image: "images/BOMB.png", long: "经研究发现，BOMB人格的内心藏着一个精密运转的倒计时器。你们拥有极强的抽象洞察力和冷酷的执行力，但极少与人分享内心的真实想法。在现实中，你们死鱼眼中透着理智，能一眼看穿事物的本质与虚伪。当面对无法修补的过去或荒谬的现实时，你们不会沉溺于悲伤，而是萌生出把它们全都爆破掉的冲动。这种极端的破坏欲，其实源于你们无法向外排解的苦闷和对纯粹、完美世界的绝对渴望。" },
+        "SNWI": { code: "COPY", name: "复制人", color: "#64748b", short: "探寻灵魂的仿生人", image: "images/COPY.png", long: "经研究发现，COPY人格常常陷入深刻的存在主义危机。你们极度理智、内向，喜欢在脑海中进行庞大而抽象的推演，却很少将其付诸行动。别人在享受世俗的快乐，你们却像在看一部廉价的科幻电影，怀疑除了心之外全都是伪造的，甚至觉得自己也是个仿生人。你们总是用上帝视角审视自己的人生，对现实的感知异常淡薄。对你们来说，在无尽的思索中探寻灵魂的真实，比任何世俗的意义都更重要。" },
+        "SNMA": { code: "WOOD", name: "啄木鸟", color: "#d97706", short: "叩问虚无的寻木者", image: "images/WOOD.png", long: "经研究发现，WOOD人格有着近乎偏执的内在精神追求。你们拥有深邃的直觉和强烈的情感，并且总是试图通过某种隐秘的方式将这种情感化为实质的信念。你们的内心世界极其丰富，却又时常感到一种难以言喻的空虚。面对刺眼的阳光，你们一言不发，只能像啄木鸟一样，笃笃地敲击着命运的枯树，试图叩问那些虚无缥缈的意义。这种略带悲剧色彩的徒劳行动，是你们对抗残酷现实的独特方式。" },
+        "SNMI": { code: "MAZE", name: "阿尔吉侬", color: "#4f46e5", short: "迷失迷宫的纯粹者", image: "images/MAZE.png", long: "经研究发现，MAZE人格仿佛被困在名为“感性”的巨大迷宫中。你们对世界有着超乎常人的敏锐和悲悯，却因为这过载的感受力而选择退缩到最安全的内心角落。你们经常在心里发问：“你为什么赋予了我心”。面对外界的纷扰，你们不愿去争抢或反抗，而是像阿尔吉侬一样慢慢改变，静静地看着花开花落。对你们来说，与其聪明而清醒地痛苦，不如在迷失中寻找最纯粹的温柔，任由思绪在黑夜里漫游。" }
     };
 
     function startTest() {
@@ -512,7 +496,9 @@
         }
     }
 
-    function goBack() { if (currentQuestionIndex > 0) { currentQuestionIndex--; renderQuestion(); } }
+    function goBack() { 
+        if (currentQuestionIndex > 0) { currentQuestionIndex--; renderQuestion(); } 
+    }
 
     function toggleSheet() {
         const modal = document.getElementById('sheet-modal');
@@ -534,7 +520,9 @@
         }
     }
 
-    function submitFromSheet() { toggleSheet(); checkAndSubmit(); }
+    function submitFromSheet() { 
+        toggleSheet(); checkAndSubmit();
+    }
 
     function checkAndSubmit() {
         const firstUnanswered = userAnswers.indexOf(null);
@@ -550,13 +538,18 @@
     function calculateResult() {
         const progressContainer = document.getElementById('progress-container');
         if (progressContainer) progressContainer.style.display = 'none';
+        let finalScores = { 
+            C: Math.random() * 0.01, S: Math.random() * 0.01, 
+            U: Math.random() * 0.01, N: Math.random() * 0.01, 
+            W: Math.random() * 0.01, M: Math.random() * 0.01, 
+            A: Math.random() * 0.01, I: Math.random() * 0.01 
+        };
 
-        let finalScores = { C: 0, S: 0, U: 0, N: 0, W: 0, M: 0, A: 0, I: 0 };
-        
         userAnswers.forEach((ans, idx) => {
             const q = questions[idx];
-            if (ans > 0) finalScores[q.agree] += ans;               
-            if (ans < 0) finalScores[q.disagree] += Math.abs(ans);  
+            const weight = q.weight || 1; 
+            if (ans > 0) finalScores[q.agree] += ans * weight;               
+            if (ans < 0) finalScores[q.disagree] += Math.abs(ans) * weight;  
         });
 
         const dim1 = finalScores.C >= finalScores.S ? "C" : "S";
@@ -570,6 +563,12 @@
         document.getElementById('screen-question').classList.remove('active');
         document.getElementById('screen-result').classList.add('active');
 
+        const getPct = (val1, val2) => (val1 + val2) === 0 ? 50 : Math.round((val1 / (val1 + val2)) * 100);
+        const pctC = getPct(finalScores.C, finalScores.S);
+        const pctU = getPct(finalScores.U, finalScores.N);
+        const pctW = getPct(finalScores.W, finalScores.M);
+        const pctA = getPct(finalScores.A, finalScores.I);
+
         try {
             document.getElementById('res-name-cn').innerText = res.name;
             document.getElementById('res-code-en').innerText = res.code;
@@ -577,7 +576,26 @@
             document.getElementById('res-short-desc').innerText = res.short;
             document.getElementById('res-code-2').innerText = res.code;
             document.getElementById('res-name-2').innerText = res.name;
-            document.getElementById('res-long-desc').innerText = res.long;
+
+            let extraDesc = "";
+            if (pctC > 80) extraDesc += "<li><strong>表达极值：</strong>你是一朵完全无法被束缚的云，几乎拒绝一切向内的压抑。</li>";
+            else if (pctC < 20) extraDesc += "<li><strong>深潜极值：</strong>你将所有的心事沉入海底，习惯了绝对的独自承受。</li>";
+            
+            if (Math.abs(pctU - 50) <= 10) extraDesc += "<li><strong>感知摇摆：</strong>在现实的夏日与虚无的暗夜之间，你保持着一种微妙而矛盾的平衡。</li>";
+            else if (pctU < 20) extraDesc += "<li><strong>虚无极值：</strong>你几乎完全脱离了世俗的重力，常年游离在哲思与夜晚的边缘。</li>";
+
+            if (pctW > 80) extraDesc += "<li><strong>理性极值：</strong>你对世界的解构充满了文字的锐利，试图用逻辑斩断所有杂乱的情绪。</li>";
+            else if (pctW < 20) extraDesc += "<li><strong>共鸣极值：</strong>你是纯粹的感受器，文字对你而言太苍白，唯有旋律能直击灵魂。</li>";
+
+            if (pctA > 80) extraDesc += "<li><strong>狂奔极值：</strong>你的人生必须有明确的目的地，极其厌恶漫无目的的停滞。</li>";
+            else if (pctA < 20) extraDesc += "<li><strong>驻足极值：</strong>你几乎完全放弃了对目的地的追逐，选择了在原地观察世界的流转。</li>";
+
+            let finalLongText = res.long;
+            if (extraDesc !== "") {
+                finalLongText += `<br><br><div style="margin-top: 15px; padding: 15px; background: #f8fafc; border-radius: 8px; border-left: 4px solid ${res.color};"><strong style="color:var(--text-main); font-size:14px;">※ 核心观测报告（你的专属倾向）：</strong><ul style="margin: 8px 0 0; padding-left: 20px; font-size: 13px; color: var(--text-secondary); line-height: 1.6;">${extraDesc}</ul></div>`;
+            }
+            
+            document.getElementById('res-long-desc').innerHTML = finalLongText;
             
             const descTitle = document.getElementById('desc-title');
             if (descTitle) descTitle.style.borderLeftColor = res.color;
@@ -596,24 +614,13 @@
 
         const audioPlayer = document.getElementById('bgm-player');
         if (audioPlayer) {
-            audioPlayer.src = `music/${res.code}.mp3`; 
+            audioPlayer.src = `music/${res.code}.mp3`;
         }
 
-        renderTraitBars(finalScores, res.color);
-    }
-
-    function renderTraitBars(scores, mainColor) {
-        const getPct = (val1, val2) => (val1 + val2) === 0 ? 50 : Math.round((val1 / (val1 + val2)) * 100);
-
-        const pctC = getPct(scores.C, scores.S);
-        const pctU = getPct(scores.U, scores.N);
-        const pctW = getPct(scores.W, scores.M);
-        const pctA = getPct(scores.A, scores.I);
-
-        updateBarUI('cs', pctC, 100 - pctC, mainColor);
-        updateBarUI('un', pctU, 100 - pctU, mainColor);
-        updateBarUI('wm', pctW, 100 - pctW, mainColor);
-        updateBarUI('ai', pctA, 100 - pctA, mainColor);
+        updateBarUI('cs', pctC, 100 - pctC, res.color);
+        updateBarUI('un', pctU, 100 - pctU, res.color);
+        updateBarUI('wm', pctW, 100 - pctW, res.color);
+        updateBarUI('ai', pctA, 100 - pctA, res.color);
     }
 
     function updateBarUI(id, pctLeft, pctRight, mainColor) {
@@ -650,22 +657,12 @@
         }
     }
 
-    document.addEventListener("WeixinJSBridgeReady", function() {
-        const deerVideo = document.getElementById('deer-video');
-        if (deerVideo) {
-            deerVideo.play().catch(function(error) {
-                console.log("WeChat Player Error", error);
-            });
-        }
-    }, false);
-
     window.addEventListener('DOMContentLoaded', (event) => {
         const deerVideo = document.getElementById('deer-video');
         if (deerVideo && deerVideo.paused) {
             deerVideo.play().catch(e => console.log("Waiting for user interaction to play video", e));
         }
     });
-
 </script>
 </body>
 </html>
