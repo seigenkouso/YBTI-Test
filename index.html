@@ -32,9 +32,18 @@
         }
 
         #app {
-            width: 100%; max-width: 100vw; min-height: 100vh;
-            background: var(--bg-color);
-            display: flex; flex-direction: column; position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            min-height: 100dvh;
+            padding-top: 80px; 
+            padding-bottom: 40px;
+            box-sizing: border-box;
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
         }
 
         @media (min-width: 768px) {
@@ -232,11 +241,14 @@
 
     <div id="screen-start" class="screen active">
         <div class="card-container" style="display: flex; flex-direction: column; align-items: center;">
-            <h1 style="margin-top: 20px;">YBTI 测试</h1>
+            <h1 style="margin-top: 20px;">YBTI 测试</h1>
             <p class="subtitle">属于✌🦌➗的“MBTI”</p>
             <div class="image-placeholder" style="border: none; background: transparent; margin-bottom: 40px; width: 200px; height: 200px; position: relative;">
-                <img src="images/deer.gif" alt="首页动画" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none;">   
-                <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10;" alt="保护层">
+                <video autoplay loop muted playsinline style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; outline: none; border: none; background-color: transparent;">
+                    <source src="images/deer.mov" type='video/quicktime'>
+                    <source src="images/deer.webm" type="video/webm">
+                </video>
+                <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10;" alt="gif">
             </div>
             <button class="btn-primary" onclick="startTest()">🔥 开始测试</button>
         </div>
