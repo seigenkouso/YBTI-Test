@@ -213,7 +213,6 @@
             border-radius: 12px; text-decoration: none; font-weight: 600; font-size: 14px;
             transition: all 0.2s;
         }
-        /* --- Wiki 内的 Logo 与图标样式 --- */
         .wiki-logo-img {
             height: 16px; 
             vertical-align: middle;
@@ -242,13 +241,13 @@
     <div id="screen-start" class="screen active">
         <div class="card-container" style="display: flex; flex-direction: column; align-items: center;">
             <h1 style="margin-top: 20px;">YBTI 测试</h1>
-            <p class="subtitle">属于✌🦌➗的“MBTI”</p>
+            <p class="subtitle">✌🦌➗的“MBTI”</p>
             <div class="image-placeholder" style="border: none; background: transparent; margin-bottom: 40px; width: 200px; height: 200px; position: relative;">
-                <video autoplay loop muted playsinline style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; outline: none; border: none; background-color: transparent;">
+                <video id="deer-video" autoplay loop muted playsinline webkit-playsinline="true" x5-playsinline="true" x5-video-player-type="h5" x5-video-player-fullscreen="false" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none; outline: none; border: none; background-color: transparent;">
                     <source src="images/deer.mov" type='video/quicktime'>
                     <source src="images/deer.webm" type="video/webm">
                 </video>
-                <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10;" alt="gif">
+                <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10;" alt="transparent layer">
             </div>
             <button class="btn-primary" onclick="startTest()">🔥 开始测试</button>
         </div>
@@ -280,7 +279,7 @@
             <button class="nav-btn" onclick="toggleSheet()" style="font-size: 20px;">✕</button>
         </div>
         <div class="sheet-grid" id="sheet-grid"></div>
-        <button class="btn-primary" style="margin-top: 40px; width: 100%; max-width: 300px;" onclick="submitFromSheet()">检查并提交</button>
+        <button class="btn-primary" style="margin-top: 40px; width: 100%; max-width: 300px;" onclick="submitFromSheet()">提交作答</button>
     </div>
 
     <div id="screen-result" class="screen" style="padding: 20px;">
@@ -292,8 +291,8 @@
                     <div class="result-name-cn" id="res-name-cn">加载中</div>
                     <div class="result-code-en" id="res-code-en">...</div>
                     <div class="image-placeholder" style="border: none; background: transparent; position: relative;">
-                        <img id="res-image" src="" alt="立绘" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none;">
-                        <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10;" alt="保护层">
+                        <img id="res-image" src="" alt="character" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none;">
+                        <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10;" alt="transparent layer">
                     </div>
                     <div class="res-short-desc" id="res-short-desc">...</div>
                     
@@ -446,7 +445,7 @@
         "SUWI": { code: "CATT", name: "卡特兰", color: "#d946ef", short: "笔尖生花的守信者", image: "images/CATT.png", 
             long: "经研究发现，CATT人格如同温室里静静绽放的旁观者。你们极度内敛，注重现实与逻辑，极少主动向外寻求情绪价值，习惯在自己的小世界里自给自足。你们看似冷漠，甚至有些傲慢地认为“别人都是不懂的”，但内心却对真诚有着严苛的洁癖。你们宁愿花钱买一颗没有伤痕的新心，也不愿在虚伪的社交中消耗自我。你们在夏天的阴影中沉睡，用最理智也最决绝的方式保护着自己的底线。" },
             
-        "SUMA": { code: "FIRE", name: "燃烧者", color: "#f97316", short: "沉默的爆裂物", image: "images/FIRE.png", 
+        "SUMA": { code: "FIRE", name: "燃烧者", color: "#f97316", short: "神秘 451 燃烧人", image: "images/FIRE.png", 
             long: "经研究发现，FIRE人格是一座伪装成死火山的活火山。在日常生活中，你们温和、默默付出，习惯于将所有的不甘、委屈与情感死死压抑在心底，用沉默和埋头苦干来应对一切。你们极度在意周围的具体感知，看着太阳都会觉得胸口在燃烧。然而，一旦忍耐达到临界点，你们就会爆发出毁灭一切的行动力。别人在遇到问题时会选择沟通或妥协，你们一旦决定爆发，就会毫不犹豫地点燃一切，然后在灰烬中重生。" },
             
         "SUMI": { code: "PLOVER", name: "千鸟", color: "#0d9488", short: "徘徊水畔的共鸣者", image: "images/PLOVER.png", 
@@ -544,7 +543,7 @@
     function checkAndSubmit() {
         const firstUnanswered = userAnswers.indexOf(null);
         if (firstUnanswered !== -1) {
-            alert(`第 ${firstUnanswered + 1} 题还没做哦~`);
+            alert(`第 ${firstUnanswered + 1} 题还没做哦`);
             currentQuestionIndex = firstUnanswered;
             renderQuestion();
             return;
@@ -587,7 +586,7 @@
             const descTitle = document.getElementById('desc-title');
             if (descTitle) descTitle.style.borderLeftColor = res.color;
         } catch (e) {
-            console.warn("部分文本标签未找到，但不影响整体运行", e);
+            console.warn("Some text tags were not found.", e);
         }
 
         try {
@@ -596,7 +595,7 @@
                 imgEl.src = res.image;
             }
         } catch (e) {
-            console.warn("图片标签未找到，跳过图片渲染", e);
+            console.warn("Image tag not found, skip image rendering.", e);
         }
 
         const audioPlayer = document.getElementById('bgm-player');
@@ -654,6 +653,22 @@
             modal.classList.add('active');
         }
     }
+
+    document.addEventListener("WeixinJSBridgeReady", function() {
+        const deerVideo = document.getElementById('deer-video');
+        if (deerVideo) {
+            deerVideo.play().catch(function(error) {
+                console.log("WeChat Player Error", error);
+            });
+        }
+    }, false);
+
+    window.addEventListener('DOMContentLoaded', (event) => {
+        const deerVideo = document.getElementById('deer-video');
+        if (deerVideo && deerVideo.paused) {
+            deerVideo.play().catch(e => console.log("Waiting for user interaction to play video", e));
+        }
+    });
 
 </script>
 </body>
